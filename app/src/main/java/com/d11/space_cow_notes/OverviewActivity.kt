@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import androidx.room.Room
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class OverviewActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
@@ -30,9 +31,18 @@ class OverviewActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
         // Find view by Ids
         val lvNotes = findViewById<ListView>(R.id.lvNotes)
+        val btAdd = findViewById<FloatingActionButton>(R.id.fab)
+
         adapter = GPSNoteAdapter(this, gpsnoteDao!!.getAll())
         lvNotes.adapter = adapter
         lvNotes.onItemClickListener = this
+
+
+        btAdd.setOnClickListener{
+            val intent = Intent(this, GPSNoteEditActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onResume() {
@@ -41,21 +51,6 @@ class OverviewActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         // Update View
         adapter?.gpsnotes = gpsnoteDao!!.getAll()
         adapter?.notifyDataSetChanged()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_list, menu)
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.add) {
-            val intent = Intent(this, GPSNoteEditActivity::class.java)
-            startActivity(intent)
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, id: Long) {

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        app:titleTextColor="@color/white"/>
+        app:titleTextColor="@color/background"/>
 
     <ImageView
         android:id="@+id/ivMap"

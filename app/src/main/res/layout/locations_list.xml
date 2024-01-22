@@ -1,22 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".OverviewActivity">
+    tools:context=".OverviewActivity"
+    android:background="@color/background">
 
-<androidx.appcompat.widget.Toolbar
-    android:id="@+id/tbMain"
-    android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tbMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            app:titleTextColor="@color/toolbar_text"/>
+
+            <ListView
+                android:id="@+id/lvNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:addStatesFromChildren="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="10.0sp"
+                />
+
+
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/fab"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/my_light_primary"
-    app:titleTextColor="@color/white"/>
+    android:layout_gravity="end|bottom"
+    android:src="@drawable/ic_add"
+    android:contentDescription="@string/add"
+    android:backgroundTint="@color/my_light_primary"
+    android:layout_margin="16dp"
+    app:shapeAppearanceOverlay="@style/FAB"
+        />
 
-<ListView
-    android:id="@+id/lvNotes"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
