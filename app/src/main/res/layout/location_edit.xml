@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="@color/white"/>
+
+    <ImageView
+        android:id="@+id/ivMap"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/loadinglocation"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/map_image"
+        />
+
+    <EditText
+        android:id="@+id/etTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:hint="@string/hint_title"/>
+
+    <EditText
+        android:id="@+id/etMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:hint="@string/hint_message"/>
+
+    <ImageButton
+        android:id="@+id/ibImage"
+        android:layout_width="fill_parent"
+        android:layout_height="250dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/image_description"
+        android:text="Click to select an image"
+        />
+
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="@string/save"
+        style="@style/Button"/>
+
+</LinearLayout>
