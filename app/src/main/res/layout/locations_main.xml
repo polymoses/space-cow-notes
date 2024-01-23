@@ -8,10 +8,18 @@
     android:background="@color/background"
     >
 
+    <!--
     <ImageView
         android:id="@+id/ivIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/Icon"/>
+    -->
+    <ImageView
+        android:id="@+id/scn_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/scn_anim"
+        style="@style/StartAnim"/>
 
 </FrameLayout>
