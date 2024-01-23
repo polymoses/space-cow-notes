@@ -4,6 +4,9 @@
     <color name="white">#ffffff</color>
     <color name="background">#181828</color>
     <color name="background_listitem">#2A283B</color>
+    <color name="background_edittext">#2A283B</color>
     <color name="toolbar_text">#776BAB</color>
+    <color name="secondary_action_color">#776BAB</color>
+    <color name="hint_text">#6B6B6B</color>
     <color name="my_light_primary">#64C7B3</color>
 </resources>

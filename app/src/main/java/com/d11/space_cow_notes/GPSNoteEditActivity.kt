@@ -57,6 +57,15 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
 
+        // Set toolbar title
+        title = getString(R.string.edit_note)
+
+        // Set the color of the toolbar chevron
+        val chevron = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back)
+        chevron?.setTint(ContextCompat.getColor(this, R.color.toolbar_text))
+        supportActionBar?.setHomeAsUpIndicator(chevron)
+
+
         // Find views by Id
         val etTitle = findViewById<EditText>(R.id.etTitle)
         val etMessage = findViewById<EditText>(R.id.etMessage)

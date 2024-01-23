@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
-            app:titleTextColor="@color/background"/>
+            app:titleTextColor="@color/toolbar_text"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,19 +54,25 @@
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:layout_marginVertical="10dp"
                 android:padding="10dp"
-                android:background="@color/white"
-                android:hint="@string/hint_title"/>
+                android:background="@color/background_edittext"
+                android:textColor="@color/white"
+                android:hint="@string/hint_title"
+                android:textColorHint="@color/hint_text"/>
 
             <EditText
                 android:id="@+id/etMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:layout_marginVertical="10dp"
                 android:padding="10dp"
-                android:background="@color/white"
-                android:hint="@string/hint_message"/>
+                android:background="@color/background_edittext"
+                android:textColor="@color/white"
+                android:hint="@string/hint_message"
+                android:textColorHint="@color/hint_text"/>
 
             <ImageButton
                 android:id="@+id/ibImage"
@@ -76,7 +82,9 @@
                 android:layout_marginVertical="10dp"
                 android:contentDescription="@string/image_description"
                 android:text="Click to select an image"
-                />
+                android:background="@color/background_edittext"/>
+                <!--android:src="@drawable/ic_add_photo_alternate"-->
+
 
 
             <Button

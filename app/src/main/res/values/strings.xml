@@ -17,4 +17,5 @@
     <string name="gps_location_changed_question">Do you want to apply the new location to this note?</string>
     <string name="map_image">Picture or Photo</string>
     <string name="no_image_selected">"No image selected</string>
+    <string name="edit_note">Notes</string>
 </resources>
