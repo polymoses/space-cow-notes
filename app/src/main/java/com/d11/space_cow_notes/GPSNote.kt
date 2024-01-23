@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "gpsnotes")
 data class GPSNote (
 
-    @ColumnInfo(name="title") var title: String,
-    @ColumnInfo(name="message") var message: String,
-    @ColumnInfo(name="latitude") var latitude: Double,
-    @ColumnInfo(name="longitude") var longitude: Double,
-    @ColumnInfo(name="image") var image: String,
+    @ColumnInfo(name="title") var title: String?,
+    @ColumnInfo(name="message") var message: String?,
+    @ColumnInfo(name="latitude") var latitude: Double?,
+    @ColumnInfo(name="longitude") var longitude: Double?,
+    @ColumnInfo(name="image") var image: ByteArray?,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 )

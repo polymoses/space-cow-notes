@@ -12,24 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@android:color/transparent">
+        android:background="@drawable/bg">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tbMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/background"
-            app:titleTextColor="@color/toolbar_text"/>
+            app:titleTextColor="@color/toolbar_text"
+            android:layout_marginBottom="10dp"/>
 
-            <ListView
-                android:id="@+id/lvNotes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:addStatesFromChildren="false"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="10.0sp"
-                />
-
+        <ListView
+            android:id="@+id/lvNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:addStatesFromChildren="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="2.0sp"
+            android:paddingHorizontal="15dp" />
 
 
     </LinearLayout>
@@ -40,6 +40,10 @@
     android:layout_height="wrap_content"
     android:layout_gravity="end|bottom"
     android:src="@drawable/ic_add"
+    android:scaleType="center"
+    app:fabSize="auto"
+    app:fabCustomSize="70dp"
+    app:maxImageSize="35dp"
     android:contentDescription="@string/add"
     android:backgroundTint="@color/my_light_primary"
     android:layout_margin="16dp"

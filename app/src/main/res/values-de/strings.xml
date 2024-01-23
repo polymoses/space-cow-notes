@@ -16,5 +16,5 @@
     <string name="gps_location_changed">Dein GPS Standort hat sich verändert</string>
     <string name="gps_location_changed_question">Sollen der neue Standor auf diese Notiz übernommen werden?</string>
     <string name="map_image">Bild oder Foto</string>
-
+    <string name="no_image_selected">"Kein Bild ausgewählt</string>
 </resources>

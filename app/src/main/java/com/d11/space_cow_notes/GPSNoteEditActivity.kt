@@ -2,28 +2,37 @@ package com.d11.space_cow_notes
 
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.LocationListener
 import android.location.LocationManager
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.*
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.room.Room
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
+import java.util.Base64
+
 
 class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener, LocationListener {
 
@@ -34,11 +43,11 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
     private val locationPermissionCode = 2
     private var latitude: Double = Double.NaN
     private var longitude: Double = Double.NaN
-    private var imageString: String? = null
     private var gpsAlertDialog: AlertDialog? = null
 
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.location_edit)
@@ -53,6 +62,11 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
         val etMessage = findViewById<EditText>(R.id.etMessage)
         val btnSave = findViewById<Button>(R.id.btnSave)
         val ibImage = findViewById<ImageButton>(R.id.ibImage)
+        val ivMap = findViewById<ImageView>(R.id.ivMap)
+        val loadingContainer = findViewById<LinearLayout>(R.id.loadingContainer)
+
+        // hide map image until loaded
+        ivMap.visibility = View.GONE
 
         // Initialize Room DB
         val db = Room.databaseBuilder(
@@ -69,8 +83,25 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
             etMessage?.setText(gpsnote?.message)
             latitude = gpsnote?.latitude!!
             longitude = gpsnote?.longitude!!
-            imageString = gpsnote?.image
+            if(gpsnote?.image != null && gpsnote?.image!!.size > 0) {
+                val bmap: Bitmap = BitmapFactory.decodeByteArray(gpsnote?.image, 0, gpsnote?.image!!.size)
+                ibImage.setImageBitmap(bmap)
+            }
+
+
             updateMap()
+        }
+
+        // initialize Media Library Picker
+        val contract = ActivityResultContracts.PickVisualMedia()
+        val pickMedia = registerForActivityResult(contract) { uri ->
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (uri != null) {
+                ibImage.setImageURI(uri)
+            } else {
+                Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_LONG).show()
+            }
         }
 
         // Update current GPS GPSNote
@@ -81,34 +112,37 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
             val title = etTitle?.text.toString()
             val message = etMessage?.text.toString()
 
+            var bmapByteArray:ByteArray = ByteArray(0)
+            if(ibImage.drawable != null) {
+                val bmap: Bitmap = ibImage.drawable.toBitmap()
+                val stream = ByteArrayOutputStream()
+                bmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                bmapByteArray = stream.toByteArray()
+            }
+
             if (gpsnote != null) {
                 gpsnote!!.title = title
                 gpsnote!!.message = message
                 gpsnote!!.latitude = latitude
                 gpsnote!!.longitude = longitude
-
+                gpsnote!!.image = bmapByteArray
                 gpsnoteDao?.update(gpsnote!!)
             } else {
-                gpsnoteDao!!.insertAll(GPSNote(title, message,latitude,longitude, ""))
+                gpsnoteDao!!.insertAll(GPSNote(title, message,latitude,longitude, bmapByteArray))
             }
 
             // Show toast for user
-            Toast.makeText(this, gpsnoteDao!!.getAll().toString(), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.note_saved, Toast.LENGTH_SHORT).show()
 
             finish()
         }
 
         ibImage.setOnClickListener{
-
-            val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                // Callback is invoked after the user selects a media item or closes the
-                // photo picker.
-                if (uri != null) {
-                   ibImage.setImageURI(uri)
-                } else {
-
-                }
-            }
+            pickMedia.launch(
+                PickVisualMediaRequest.Builder()
+                    .setMediaType(ImageOnly)
+                    .build()
+            )
 
         }
     }
@@ -151,9 +185,9 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if ((ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
         }
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
     }
 
     override fun onLocationChanged(location: android.location.Location) {
@@ -186,10 +220,20 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
     private fun updateMap() {
         val url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude + "&zoom=18&size=800x300&key=AIzaSyDqNUFsJhnTthP_WY0ISaCpp-56UuvOwPE&markers=size:tiny|" + latitude + "," + longitude + ""
         val iv = findViewById<ImageView>(R.id.ivMap)
-
-        iv.setImageResource(R.drawable.loadinglocation)
-
+        val loader = findViewById<LinearLayout>(R.id.loadingContainer)
+        loader.visibility = View.GONE
+        iv.visibility = View.VISIBLE
         Picasso.get().load(url).into(iv);
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(grantResults.size > 0 && grantResults[0] >= 0) {
+            getLocation()
+        }
+
+
     }
 
 }

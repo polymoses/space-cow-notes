@@ -38,6 +38,7 @@ android {
 
 dependencies {
     implementation("androidx.room:room-ktx:2.5.2")
+    implementation("androidx.cardview:cardview:1.0.0")
     kapt("androidx.room:room-compiler:2.5.2")
 
     implementation("androidx.core:core-ktx:1.9.0")
