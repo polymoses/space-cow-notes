@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -28,10 +27,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.widget.addTextChangedListener
 import androidx.room.Room
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
-import java.util.Base64
 
 
 class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener, LocationListener {
@@ -69,13 +68,16 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
         // Find views by Id
         val etTitle = findViewById<EditText>(R.id.etTitle)
         val etMessage = findViewById<EditText>(R.id.etMessage)
-        val btnSave = findViewById<Button>(R.id.btnSave)
         val ibImage = findViewById<ImageButton>(R.id.ibImage)
         val ivMap = findViewById<ImageView>(R.id.ivMap)
-        val loadingContainer = findViewById<LinearLayout>(R.id.loadingContainer)
+        val ibFooterDelete = findViewById<ImageView>(R.id.ib_footer_delete)
+        val ibFooterAdd = findViewById<ImageView>(R.id.ib_footer_add)
 
         // hide map image until loaded
         ivMap.visibility = View.GONE
+
+        // hide image
+        ibImage.visibility = View.GONE
 
         // Initialize Room DB
         val db = Room.databaseBuilder(
@@ -90,16 +92,21 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
             gpsnote = gpsnoteDao!!.loadAllByIds(id.toInt())[0]
             etTitle?.setText(gpsnote?.title)
             etMessage?.setText(gpsnote?.message)
-            latitude = gpsnote?.latitude!!
-            longitude = gpsnote?.longitude!!
+            latitude = if(gpsnote?.latitude == null) Double.NaN else gpsnote?.latitude!!
+            longitude = if(gpsnote?.longitude == null) Double.NaN else gpsnote?.longitude!!
             if(gpsnote?.image != null && gpsnote?.image!!.size > 0) {
                 val bmap: Bitmap = BitmapFactory.decodeByteArray(gpsnote?.image, 0, gpsnote?.image!!.size)
                 ibImage.setImageBitmap(bmap)
+                ibImage.visibility = View.VISIBLE
             }
 
 
             updateMap()
         }
+
+        // Auto Save
+        etTitle.addTextChangedListener { autoSave() }
+        etMessage.addTextChangedListener { autoSave() }
 
         // initialize Media Library Picker
         val contract = ActivityResultContracts.PickVisualMedia()
@@ -108,6 +115,7 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
             // photo picker.
             if (uri != null) {
                 ibImage.setImageURI(uri)
+                autoSave()
             } else {
                 Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_LONG).show()
             }
@@ -116,42 +124,64 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
         // Update current GPS GPSNote
         getLocation()
 
-        // Set OnClickListener
-        btnSave.setOnClickListener{
-            val title = etTitle?.text.toString()
-            val message = etMessage?.text.toString()
-
-            var bmapByteArray:ByteArray = ByteArray(0)
-            if(ibImage.drawable != null) {
-                val bmap: Bitmap = ibImage.drawable.toBitmap()
-                val stream = ByteArrayOutputStream()
-                bmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                bmapByteArray = stream.toByteArray()
-            }
-
-            if (gpsnote != null) {
-                gpsnote!!.title = title
-                gpsnote!!.message = message
-                gpsnote!!.latitude = latitude
-                gpsnote!!.longitude = longitude
-                gpsnote!!.image = bmapByteArray
-                gpsnoteDao?.update(gpsnote!!)
-            } else {
-                gpsnoteDao!!.insertAll(GPSNote(title, message,latitude,longitude, bmapByteArray))
-            }
-
-            // Show toast for user
-            Toast.makeText(this, R.string.note_saved, Toast.LENGTH_SHORT).show()
-
-            finish()
-        }
-
         ibImage.setOnClickListener{
             pickMedia.launch(
                 PickVisualMediaRequest.Builder()
                     .setMediaType(ImageOnly)
                     .build()
             )
+        }
+
+        ibFooterAdd.setOnClickListener{
+            pickMedia.launch(
+                PickVisualMediaRequest.Builder()
+                    .setMediaType(ImageOnly)
+                    .build()
+            )
+        }
+
+        ibFooterDelete.setOnClickListener{
+            deleteGPSNote()
+        }
+
+
+    }
+
+    private fun autoSave() {
+        val etTitle = findViewById<EditText>(R.id.etTitle)
+        val etMessage = findViewById<EditText>(R.id.etMessage)
+        val ibImage = findViewById<ImageButton>(R.id.ibImage)
+
+
+        val title = etTitle?.text.toString()
+        val message = etMessage?.text.toString()
+
+        var bmapByteArray:ByteArray = ByteArray(0)
+        if(ibImage.drawable != null) {
+            val bmap: Bitmap = ibImage.drawable.toBitmap()
+            val stream = ByteArrayOutputStream()
+            bmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            bmapByteArray = stream.toByteArray()
+            ibImage.visibility = View.VISIBLE
+        } else {
+            ibImage.visibility = View.GONE
+        }
+
+        // dont autosave new notes without content
+        if(gpsnote == null && title.length == 0 && message.length == 0 && ibImage.drawable == null) return
+
+        if (gpsnote != null) {
+            gpsnote!!.title = title
+            gpsnote!!.message = message
+            gpsnote!!.latitude = latitude
+            gpsnote!!.longitude = longitude
+            gpsnote!!.image = bmapByteArray
+            gpsnoteDao?.update(gpsnote!!)
+
+        } else {
+            gpsnote = GPSNote(title, message,latitude,longitude, bmapByteArray)
+            gpsnoteDao!!.insertAll(gpsnote!!)
+            gpsnote = gpsnoteDao!!.getLatest()
 
         }
     }
@@ -165,13 +195,12 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()
-            R.id.delete -> showDeleteDialog()
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showDeleteDialog() {
+    private fun deleteGPSNote() {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.delete_message))
             .setPositiveButton(getString(R.string.yes), this)
@@ -182,10 +211,6 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
     override fun onClick(p0: DialogInterface?, p1: Int) {
         gpsnote?.let {
             gpsnoteDao?.delete(it)
-
-            // Display Toast
-            Toast.makeText(this, R.string.delete_message, Toast.LENGTH_LONG).show()
-
             finish()
         }
     }
@@ -227,12 +252,13 @@ class GPSNoteEditActivity : AppCompatActivity(), DialogInterface.OnClickListener
     }
 
     private fun updateMap() {
-        val url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude + "&zoom=18&size=800x300&key=AIzaSyDqNUFsJhnTthP_WY0ISaCpp-56UuvOwPE&markers=size:tiny|" + latitude + "," + longitude + ""
+        val url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude + "&zoom=15&size=800x300&key=AIzaSyDqNUFsJhnTthP_WY0ISaCpp-56UuvOwPE&markers=size:normal|" + latitude + "," + longitude + ""
         val iv = findViewById<ImageView>(R.id.ivMap)
         val loader = findViewById<LinearLayout>(R.id.loadingContainer)
         loader.visibility = View.GONE
         iv.visibility = View.VISIBLE
         Picasso.get().load(url).into(iv);
+        if(!this.isFinishing) autoSave()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,

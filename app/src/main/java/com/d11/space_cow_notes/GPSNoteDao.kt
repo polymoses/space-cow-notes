@@ -23,4 +23,7 @@ interface GPSNoteDao {
 
     @Query("SELECT * FROM gpsnotes WHERE id IS (:id)")
     fun loadAllByIds(id: Int): List<GPSNote>
+
+    @Query("select * from gpsnotes order by id desc limit 1")
+    fun getLatest():GPSNote
 }

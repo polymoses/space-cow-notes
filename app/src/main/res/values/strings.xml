@@ -7,7 +7,6 @@
     <string name="image_description">Location Image</string>
     <string name="add">Add</string>
     <string name="save">Save</string>
-    <string name="note_saved">Note saved</string>
     <string name="delete">Delete</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -17,5 +16,6 @@
     <string name="gps_location_changed_question">Do you want to apply the new location to this note?</string>
     <string name="map_image">Picture or Photo</string>
     <string name="no_image_selected">"No image selected</string>
-    <string name="edit_note">Notes</string>
+    <string name="edit_note">Space Cow Notes</string>
+    <string name="no_title">No title</string>
 </resources>

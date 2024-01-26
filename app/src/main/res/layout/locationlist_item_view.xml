@@ -48,6 +48,7 @@
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvImageCard"
             android:layout_width="100dp"
             android:layout_height="100dp"
             app:cardCornerRadius="10dp"
@@ -59,7 +60,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:background="@color/white"
                 android:contentDescription="@string/image_description"
                 android:scaleType="centerCrop" />
 

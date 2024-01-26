@@ -12,5 +12,5 @@ data class GPSNote (
     @ColumnInfo(name="latitude") var latitude: Double?,
     @ColumnInfo(name="longitude") var longitude: Double?,
     @ColumnInfo(name="image") var image: ByteArray?,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
 )

@@ -8,7 +8,7 @@
     tools:context=".OverviewActivity"
     android:background="@color/background"
     >
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -20,25 +20,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
-            app:titleTextColor="@color/toolbar_text"/>
+            app:titleTextColor="@color/toolbar_text" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:layout_marginTop="60dp"
+            >
             <LinearLayout
                 android:id="@+id/loadingContainer"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:orientation="vertical">
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:layout_marginTop="50dp"
-                android:layout_gravity="center"/>
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:layout_marginTop="50dp"
+                    android:layout_gravity="center"/>
             </LinearLayout>
             <ImageView
                 android:id="@+id/ivMap"
@@ -85,15 +87,41 @@
                 android:background="@color/background_edittext"/>
                 <!--android:src="@drawable/ic_add_photo_alternate"-->
 
-
-
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_medium"
-                android:text="@string/save"
-                style="@style/Button"/>
         </LinearLayout>
-    </LinearLayout>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tbFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/toolbar_text"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            >
+
+
+
+            <ImageButton
+                android:id="@+id/ib_footer_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_photo_size_select_actual"
+                android:padding="25dp"
+                android:layout_marginHorizontal="35dp"
+                android:layout_gravity="center"/>
+
+
+            <ImageButton
+                android:id="@+id/ib_footer_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_delete"
+                android:padding="25dp"
+                android:layout_marginHorizontal="35dp"
+                android:layout_gravity="center"/>
+
+        </androidx.appcompat.widget.Toolbar>
+    </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 
 class GPSNoteAdapter(var context: Context, var gpsnotes: List<GPSNote>): BaseAdapter() {
 
@@ -55,14 +56,18 @@ class GPSNoteAdapter(var context: Context, var gpsnotes: List<GPSNote>): BaseAda
         val ivImage = holder.image
         val tvGPSLocation = holder.GPSLocation
         val note = gpsnotes[position]
+        val cvCard:CardView = view.findViewById(R.id.cvImageCard)
 
-        if(note.image != null && note?.image!!.size > 0) {
-            val bmap: Bitmap = BitmapFactory.decodeByteArray(note?.image, 0, note?.image!!.size)
+        if(note.image != null && note.image!!.size > 0) {
+            val bmap: Bitmap = BitmapFactory.decodeByteArray(note.image, 0, note.image!!.size)
             ivImage.setImageBitmap(bmap)
+            cvCard.visibility = View.VISIBLE
+        } else {
+            cvCard.visibility = View.GONE
         }
 
 
-        tvTitle.text = note.title
+        tvTitle.text = if(note.title?.trim()?.length!! > 0)  note.title else context.getString(R.string.no_title)
         tvMessage.text = note.message
 
         // compose gps lat long output

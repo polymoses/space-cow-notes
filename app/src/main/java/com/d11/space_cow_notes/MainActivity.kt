@@ -20,13 +20,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.locations_main)
 
 
-        // Logo Effect
-        //val ivIcon = findViewById<ImageView>(R.id.ivIcon)
-        //val zoomIn = AnimationUtils.loadAnimation(this, R.anim.rotate)
-        //ivIcon.startAnimation(zoomIn)
+        val scnImage = findViewById<ImageView>(R.id.scn_image)
 
-        // Animation for SpaceCowNotes
-        val scnImage = findViewById<ImageView>(R.id.scn_image).apply {
+        // Zoom/Fade/Bounce Animation
+        val zoomIn = AnimationUtils.loadAnimation(this, R.anim.zoom_bounce_in)
+        scnImage.startAnimation(zoomIn)
+
+        // SpaceCowNotes Animation
+        scnImage.apply {
             setBackgroundResource(R.drawable.scn_anim)
             scnAnimation = background as AnimationDrawable
         }
